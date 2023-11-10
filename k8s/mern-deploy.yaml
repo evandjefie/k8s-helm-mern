@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mern-app # name of the deployment
+  namespace: mern-app # namespace on which we deploy the resources
+  labels:
+    app: mern-app
+spec:
+  replicas: 1 # Number of pods for this specific deployment
+  selector:
+    matchLabels:
+      app: mern-app
+  template:
+    metadata:
+      labels:
+        app: mern-app
+    spec:
+      containers:
+      - name: mern-app
+        image: evandjefie/api-todo:1.0
+        ports:
+        - name: http
+          containerPort: 8080
+        resources:
+          requests:
+            memory: 64Mi
+            cpu: 100m
+          limits:
+            memory: 128Mi
+            cpu: 300m            
+        envFrom:
+          - secretRef:
+              name: todoapp-mongodb
+
+
+
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   annotations:
+#     kompose.cmd: kompose convert -f docker-compose-dev.yml -o mern-k8s/
+#     kompose.version: 1.30.0 (9d8dcb518)
+#   creationTimestamp: null
+#   labels:
+#     io.kompose.service: mern-app
+#   name: mern-app
+#   namespace: mern-app
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       io.kompose.service: mern-app
+#   strategy:
+#     type: Recreate
+#   template:
+#     metadata:
+#       annotations:
+#         kompose.cmd: kompose convert -f docker-compose-dev.yml -o mern-k8s/
+#         kompose.version: 1.30.0 (9d8dcb518)
+#       creationTimestamp: null
+#       labels:
+#         io.kompose.network/2020-12-27-productionize-mern-mern-app: "true"
+#         io.kompose.service: mern-app
+#     spec:
+#       containers:
+#         - env:
+#             - name: MONGO_URI
+#               value: '''mongodb://todoapp-mongodb:27017/cinema'''
+#           image: evanndjefie/api-todo:1.0
+#           name: mern-app
+#           ports:
+#             - containerPort: 5000
+#               hostPort: 5000
+#               protocol: TCP
+#           envFrom:
+#             - secretRef:
+#                 name: todoapp-mongodb          
+#           # resources: {}
+#           # volumeMounts:
+#           #   - mountPath: /usr/src/app
+#           #     name: mern-app-claim0
+#           #   - mountPath: /usr/src/app/node_modules
+#           #     name: mern-app-claim1
+#       restartPolicy: Always
+#       volumes:                
